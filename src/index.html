@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Banana Clicker</title>
+    <meta charset="utf-8">
+    <style>
+        body { background: #a69805;
+            color: #ffffff;
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 5vh;
+        }
+
+        .not-selectable {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #click-item {
+            font-size: 30vh;
+        }
+    </style>
+</head>
+<body>
+<h1>Bananas: <span id="score-display">0</span></h1>
+<div class="not-selectable" id="click-item">🍌</div>
+
+<script>
+    let score = 0;
+    let clickPower = 1;
+    let scorePerSecond = 0;
+
+    const scoreDisplay = document.getElementById('score-display');
+    const bananaButton = document.getElementById('click-item');
+
+    bananaButton.addEventListener('click', () => { score += clickPower; scoreDisplay.innerHTML = score.toString() });
+</script>
+</body>
+</html>

@@ -31,12 +31,33 @@
 <script>
     let score = 0;
     let clickPower = 1;
-    let scorePerSecond = 0;
+    let scorePerSecond = 2;
+    let lastUpdateTime = 0;
 
     const scoreDisplay = document.getElementById('score-display');
     const bananaButton = document.getElementById('click-item');
 
-    bananaButton.addEventListener('click', () => { score += clickPower; scoreDisplay.innerHTML = score.toString() });
+    bananaButton.addEventListener('click', () => { updateScore(score + clickPower); });
+
+    function incrementScore(currentTime) {
+        if (!lastUpdateTime) lastUpdateTime = currentTime;
+        const deltaT = (currentTime - lastUpdateTime) / 1000;
+        lastUpdateTime = currentTime;
+
+        updateScore(score + scorePerSecond * deltaT);
+
+        requestAnimationFrame(incrementScore);
+    }
+    requestAnimationFrame(incrementScore);
+
+    function updateScore(newScore) {
+        score = newScore;
+        if (score < 100) {
+            scoreDisplay.innerHTML = score.toFixed(2);
+        } else {
+            scoreDisplay.innerHTML = score.toFixed(0);
+        }
+    }
 </script>
 </body>
 </html>

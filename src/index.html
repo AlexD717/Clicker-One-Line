@@ -85,6 +85,12 @@
         ["Increment per Second +5", 5000, 1.2, 0, 5],
     ]
 
+    let userData = {
+        score: 0,
+        clickPower: 1,
+        scorePerSecond: 2
+    };
+
     for (let i = 0; i < upgrades.length; i++) {
         const newButton = document.createElement("button");
 
@@ -100,13 +106,11 @@
         newButton.textContent = `${upgradeText}\nCost: ${upgrades[i][1]}`;
 
         newButton.addEventListener("click", () => {
-            buyUpgrade(upgrades[i][2], upgrades[i][3], upgrades[i][4]);
+            buyUpgrade(upgrades[i][1], upgrades[i][3], upgrades[i][4]);
         })
     }
 
     let lastUpdateTime = 0;
-
-    let userData = JSON.parse(localStorage.getItem("user")) || {score: 0, clickPower: 1, scorePerSecond: 2};
 
     const scoreDisplay = document.getElementById('score-display');
     const clickPowerDisplay = document.getElementById('click-power');
@@ -145,8 +149,6 @@
         clickPowerDisplay.innerHTML = userData.clickPower;
         incrementPowerDisplay.innerHTML = userData.scorePerSecond;
     }
-
-    setInterval(() => { localStorage.setItem("user", JSON.stringify(userData)) }, 5000); // Saves data
 </script>
 </body>
 </html>

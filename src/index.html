@@ -23,7 +23,7 @@
         button {
             padding: 1vh;
             cursor: pointer;
-            color: #ffffff;
+            color: white;
             background: #d16f0d;
             border: none;
             outline: none;
@@ -33,6 +33,13 @@
 
         button:active {
             transform: scale(.98);
+        }
+
+        button:disabled {
+            background: #9f550a;
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .cent-div {
@@ -76,8 +83,8 @@
     const clickUpgradeContainer = document.getElementById('click-power-upgrade');
     const incrementUpgradeContainer = document.getElementById('increment-upgrade');
 
-    // Name, cost, cost multiplier, click power increase, increment per second increase
-    const upgrades = [
+    // Cost, cost multiplier, click power increase, increment per second increase
+    let upgrades = [
         // Click upgrades
         [50, 1.2, 1, 0],
         [2000, 1.2, 5, 0],
@@ -93,6 +100,7 @@
         scorePerSecond: 2
     };
 
+    let upgradeButtons = []
     for (let i = 0; i < upgrades.length; i++) {
         const newButton = document.createElement("button");
 
@@ -104,12 +112,18 @@
             upgradeText = "Increment per Second " + upgrades[i][3];
             incrementUpgradeContainer.appendChild(newButton);
         }
+        upgradeText += "\nCost: "
 
-        newButton.textContent = `${upgradeText}\nCost: ${upgrades[i][0]}`;
+        newButton.textContent = `${upgradeText}${upgrades[i][0]}`;
 
         newButton.addEventListener("click", () => {
-            buyUpgrade(upgrades[i][0], upgrades[i][2], upgrades[i][3]);
+            buyUpgrade(i);
         })
+
+        upgradeButtons.push({
+            element: newButton,
+            baseText: upgradeText
+        });
     }
 
     let lastUpdateTime = 0;
@@ -121,11 +135,12 @@
 
     bananaButton.addEventListener('click', () => { userData.score += userData.clickPower; updateUI(); });
 
-    function buyUpgrade(cost, powerIncrease, incrementIncrease) {
-        if (userData.score >= cost) {
-            userData.score -= cost;
-            userData.clickPower += powerIncrease;
-            userData.scorePerSecond += incrementIncrease;
+    function buyUpgrade(upgradeIndex) {
+        if (userData.score >= upgrades[upgradeIndex][0]) {
+            userData.score -= upgrades[upgradeIndex][0];
+            upgrades[upgradeIndex][0] *= upgrades[upgradeIndex][1]; // Increase cost of upgrade
+            userData.clickPower += upgrades[upgradeIndex][2];
+            userData.scorePerSecond += upgrades[upgradeIndex][3];
             updateUI();
         }
     }
@@ -150,6 +165,14 @@
         }
         clickPowerDisplay.innerHTML = userData.clickPower;
         incrementPowerDisplay.innerHTML = userData.scorePerSecond;
+
+        for (let i = 0; i < upgrades.length; i++) {
+            let cost = upgrades[i][0];
+            let buttonObj = upgradeButtons[i];
+
+            buttonObj.element.textContent = `${buttonObj.baseText}${Math.ceil(cost)}`;
+            buttonObj.element.disabled = userData.score < cost;
+        }
     }
 </script>
 </body>

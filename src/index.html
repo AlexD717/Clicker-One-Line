@@ -48,6 +48,23 @@
             gap: 10vh;
         }
 
+        .float {
+            position: fixed;
+            pointer-events: none;
+            animation: floatUp .7s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-40px);
+                opacity: 0;
+            }
+        }
+
         #click-item {
             font-size: 30vh;
             cursor: pointer;
@@ -86,7 +103,7 @@
     // Cost, cost multiplier, click power increase, increment per second increase
     let upgrades = [
         // Click upgrades
-        [50, 1.2, 1, 0],
+        [25, 1.2, 1, 0],
         [2000, 1.2, 5, 0],
 
         // Increment per second upgrades
@@ -97,7 +114,7 @@
     let userData = {
         score: 0,
         clickPower: 1,
-        scorePerSecond: 2
+        scorePerSecond: 0
     };
 
     let upgradeButtons = []
@@ -133,7 +150,14 @@
     const incrementPowerDisplay = document.getElementById('increment-per-second');
     const bananaButton = document.getElementById('click-item');
 
-    bananaButton.addEventListener('click', () => { userData.score += userData.clickPower; updateUI(); });
+    bananaButton.addEventListener('click', (e) => {
+        userData.score += userData.clickPower;
+        updateUI();
+
+        const jitterX = e.clientX + (Math.random() * 20 - 15);
+        const jitterY = e.clientY - 15;
+        popText(`+${userData.clickPower}`, jitterX, jitterY);
+    });
 
     function buyUpgrade(upgradeIndex) {
         if (userData.score >= upgrades[upgradeIndex][0]) {
@@ -158,11 +182,8 @@
     requestAnimationFrame(autoIncrementScore);
 
     function updateUI() {
-        if (userData.score < 100) {
-            scoreDisplay.innerHTML = userData.score.toFixed(2);
-        } else {
-            scoreDisplay.innerHTML = userData.score.toFixed(0);
-        }
+        scoreDisplay.innerHTML = userData.score.toFixed(0);
+
         clickPowerDisplay.innerHTML = userData.clickPower;
         incrementPowerDisplay.innerHTML = userData.scorePerSecond;
 
@@ -173,6 +194,18 @@
             buttonObj.element.textContent = `${buttonObj.baseText}${Math.ceil(cost)}`;
             buttonObj.element.disabled = userData.score < cost;
         }
+    }
+
+    function popText(txt, x, y) {
+        const element = document.createElement("span");
+        element.className = "float";
+        element.textContent = txt;
+        element.style.cssText = `left:${x}px;top:${y}px`;
+        element.style.fontSize = "2rem";
+
+        document.body.appendChild(element);
+
+        setTimeout(() => element.remove(), 700)
     }
 </script>
 </body>

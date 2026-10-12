@@ -110,6 +110,7 @@
         [50, 1.4, 0, 1],
         [5000, 1.2, 0, 5],
     ]
+    const critChance = 0.1;
 
     let userData = {
         score: 0,
@@ -151,12 +152,14 @@
     const bananaButton = document.getElementById('click-item');
 
     bananaButton.addEventListener('click', (e) => {
-        userData.score += userData.clickPower;
+        const crit = Math.random() < critChance ? 5 : 1;
+        const scoreIncrease = userData.clickPower * crit;
+        userData.score += scoreIncrease;
         updateUI();
 
         const jitterX = e.clientX + (Math.random() * 20 - 15);
         const jitterY = e.clientY - 15;
-        popText(`+${userData.clickPower}`, jitterX, jitterY);
+        popText((crit > 1 ? "CRIT! " : "") + `+${scoreIncrease}`, jitterX, jitterY, crit > 1);
     });
 
     function buyUpgrade(upgradeIndex) {
@@ -196,12 +199,18 @@
         }
     }
 
-    function popText(txt, x, y) {
+    function popText(txt, x, y, isCrit) {
         const element = document.createElement("span");
         element.className = "float";
         element.textContent = txt;
         element.style.cssText = `left:${x}px;top:${y}px`;
         element.style.fontSize = "2rem";
+
+        if (isCrit) {
+            element.style.color = "#c35b10";
+            element.style.fontWeight = "bold";
+            element.style.fontSize = "2.5rem";
+        }
 
         document.body.appendChild(element);
 

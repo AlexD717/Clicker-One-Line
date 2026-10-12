@@ -38,5 +38,22 @@ mkdirSync("dist", { recursive: true });
 writeFileSync("dist/index.html", html);
 writeFileSync("dist/uri.txt", uri);
 
+// Modify README to contain updates uri text
+try {
+    const readmePath = "README.md";
+    const readmeContent = readFileSync(readmePath, "utf8");
+
+    const markerRegex = /<!-- URI_START -->[\s\S]*?<!-- URI_END -->/;
+    const replacement = `<!-- URI_START -->\n\`\`\`html\n${uri}\n\`\`\`\n<!-- URI_END -->`;
+
+    if (markerRegex.test(readmeContent)) {
+        const updatedReadme = readmeContent.replace(markerRegex, replacement);
+        writeFileSync(readmePath, updatedReadme);
+        console.log("Updated README with new URI block")
+    }
+} catch (error) {
+    console.error("Failed to update README.md", error.message);
+}
+
 const bytes = Buffer.byteLength(uri);
 console.log(bytes + " / " + LIMIT + " bytes, " + (bytes > LIMIT ? bytes - LIMIT + " over" : LIMIT - bytes + " left"));
